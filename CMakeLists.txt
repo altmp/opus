@@ -4,10 +4,23 @@ project(opus)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /GL /LTCG /Zi /O2")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /LTCG /Zi /O2")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
 
 add_definitions(-DHAVE_CONFIG_H)
+
+execute_process(
+    COMMAND ${GIT_EXECUTABLE} rev-parse --abbrev-ref HEAD
+    OUTPUT_VARIABLE GIT_BRANCH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+execute_process(
+    COMMAND ${GIT_EXECUTABLE} log -1 --format=%h
+    OUTPUT_VARIABLE GIT_COMMIT_HASH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+add_definitions(-DPACKAGE_VERSION="${GIT_BRANCH}-${GIT_COMMIT_HASH}")
 
 file(GLOB_RECURSE PROJECT_SOURCE_FILES
     "celt/bands.c"
@@ -196,7 +209,7 @@ file(GLOB_RECURSE PROJECT_INCLUDE_FILES
     "silk/tuning_parameters.h"
     "silk/typedef.h"
     "silk/x86/main_sse.h"
-    "win32/config.h"
+    "src/config.h"
     "src/analysis.h"
     "src/mapping_matrix.h"
     "src/mlp.h"
